@@ -48,11 +48,11 @@ class TwigParserService
     protected function checkIfDirectoriesExist($templates, $output)
     {
         if (!$this->filesystem->exists($templates)) {
-            throw new \InvalidArgumentException($templates);
+            throw new \InvalidArgumentException($templates . ' directory does not exist.');
         }
 
         if (!$this->filesystem->exists($output)) {
-            throw new \InvalidArgumentException($output);
+            throw new \InvalidArgumentException($output . ' directory does not exist.');
         }
     }
 

@@ -42,6 +42,8 @@ class ParseCommand extends Command
         } catch (\Exception $e) {
             $output->writeln('<info>Could not parse templates.</info>');
             $output->writeln('<error>' . $e->getMessage() . '</error>');
+
+            exit;
         }
 
         $output->writeln('<info>Views parsed successfully.</info>');
