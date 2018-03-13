@@ -1,0 +1,16 @@
+{
+    "name": "statwig/statwig",
+    "description": "Static site generator using Twig templating engine",
+    "type": "project",
+    "require": {
+        "twig/twig": "^2.4"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Krzysztof",
+            "email": "krzysztof@engineer.com"
+        }
+    ],
+    "minimum-stability": "stable"
+}
