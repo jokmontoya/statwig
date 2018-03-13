@@ -10,6 +10,8 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
 
 class ParseCommand extends Command
 {
@@ -32,9 +34,11 @@ class ParseCommand extends Command
 
         $loader = new \Twig_Loader_Filesystem($templatesDirectory);
         $twig = new \Twig_Environment($loader);
+        $finder = new Finder();
+        $filesystem = new Filesystem();
 
         try {
-            (new TwigParserService($twig))
+            (new TwigParserService($twig, $filesystem, $finder))
                 ->execute($templatesDirectory, $outputDirectory);
         } catch (DirectoryNotReadableException $e) {
             $output->writeln('<error>' . $e->getMessage() . ' directory does not exist or is not readable.</error>');

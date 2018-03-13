@@ -5,6 +5,8 @@ namespace Statwig\Statwig\Services;
 use Statwig\Statwig\Exceptions\DirectoryNotReadableException;
 use Statwig\Statwig\Exceptions\DirectoryNotWritableException;
 use Statwig\Statwig\Helpers\FileFinder;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
 use Twig_Environment;
 
 class TwigParserService
@@ -14,27 +16,43 @@ class TwigParserService
 
     protected $twig;
 
-    public function __construct(Twig_Environment $twig)
-    {
+    protected $filesystem;
+
+    protected $finder;
+
+    public function __construct(
+        Twig_Environment $twig,
+        Filesystem $filesystem,
+        Finder $finder
+    ) {
         $this->twig = $twig;
+        $this->filesystem = $filesystem;
+        $this->finder = $finder;
     }
 
     public function execute($templates, $output)
     {
-        if ( ! is_writable($output)) {
+        if ( ! $this->filesystem->exists($templates)) {
+            throw new DirectoryNotReadableException($templates);
+        }
+
+        if ( ! $this->filesystem->exists($output)) {
             throw new DirectoryNotWritableException($output);
         }
 
-        $files = (new FileFinder())
-            ->fromDirectoryWithExtension($templates, self::INPUT_EXTENSION);
+        /** @var \SplFileInfo[] $files */
+        $files = $this->finder->in($templates)
+            ->files()
+            ->depth(0)
+            ->name('*' . self::INPUT_EXTENSION);
 
         foreach ($files as $file) {
-            $contents = $this->twig->render($file);
-
-            $fileName = str_replace(self::INPUT_EXTENSION, self::OUTPUT_EXTENSION, $file);
+            $contents = $this->twig->render($file->getFilename());
+            $fileName = str_replace(self::INPUT_EXTENSION, self::OUTPUT_EXTENSION, $file->getFilename());
             $filePath = rtrim($output, '/') . '/' . $fileName;
 
-            file_put_contents($filePath, $contents);
+            $this->filesystem->remove($filePath);
+            $this->filesystem->appendToFile($filePath, $contents);
         }
     }
 }
