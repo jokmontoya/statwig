@@ -29,5 +29,8 @@
     "require-dev": {
         "phpunit/phpunit": "^7.0",
         "php-vfs/php-vfs": "^1.4"
-    }
+    },
+    "bin": [
+        "bin/statwig"
+    ]
 }
