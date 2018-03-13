@@ -28,7 +28,12 @@ class ParseCommand extends Command
         $templatesDirectory = $directoryParser->parse(BASE_PATH, $input->getArgument('templates'));
         $outputDirectory = $directoryParser->parse(BASE_PATH, $input->getArgument('output'));
 
-        $twigParser = new TwigParserService();
+        $loader = new \Twig_Loader_Filesystem($templatesDirectory);
+        $twig = new \Twig_Environment($loader, [
+           'cache' => false
+        ]);
+
+        $twigParser = new TwigParserService($twig);
         $twigParser->execute($templatesDirectory, $outputDirectory);
     }
 }

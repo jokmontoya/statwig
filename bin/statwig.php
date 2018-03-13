@@ -2,7 +2,6 @@
 <?php
 
 define('BASE_PATH', realpath(__DIR__.'/../'));
-define('CACHE_PATH', BASE_PATH . '/var/cache');
 
 require __DIR__.'/../vendor/autoload.php';
 
