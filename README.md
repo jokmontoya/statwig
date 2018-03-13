@@ -38,6 +38,51 @@ statwig
 
 You can use all Twig functionality like including files, extending layouts etc. Just put every file to be included/extended into subdirectory to be omitted by the compiler.
 
+Given you have the following directory structure:
+
+``` 
+- templates/
+-- layouts/
+---  base.html.twig
+-- file.html.twig
+- output/
+vendor/
+composer.json
+```
+
+When you run the tool, you will get a new file:
+
+``` 
+- templates/
+-- layouts/
+---  base.html.twig
+-- file.html.twig
+- output/
+-- file.html
+vendor/
+composer.json
+```
+
+Given the template looks like this:
+
+```twig
+<div>{% block body %}{% endblock %}
+```
+
+and `file.html.twig`:
+
+```twig
+{% extends 'layouts/base.html.twig' %}
+
+{% block body %}Hello world{% endblock %}
+```
+
+the output of the `output/file.html` will be:
+
+```html
+<div>Hello world</div>
+```
+
 ### Customization
 
 You can override default paths by providing arguments: first one is the templates path and second output folder:
