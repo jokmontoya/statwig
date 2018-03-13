@@ -32,28 +32,54 @@ class TwigParserService
 
     public function execute($templates, $output)
     {
-        if ( ! $this->filesystem->exists($templates)) {
-            throw new \InvalidArgumentException($templates);
-        }
+        $this->checkIfDirectoriesExist($templates, $output);
 
-        if ( ! $this->filesystem->exists($output)) {
-            throw new \InvalidArgumentException($output);
-        }
+        $this->cleanOutputDirectory($output);
 
-        /** @var \SplFileInfo[] $files */
-        $files = $this->finder->in($templates)
-            ->files()
-            ->depth(0)
-            ->name('*' . self::INPUT_EXTENSION);
+        $files = $this->findInputFiles($templates);
 
         foreach ($files as $file) {
             $contents = $this->twig->render($file->getFilename());
 
-            $fileName = str_replace(self::INPUT_EXTENSION, self::OUTPUT_EXTENSION, $file->getFilename());
-            $filePath = rtrim($output, '/') . '/' . $fileName;
-
-            $this->filesystem->remove($filePath);
-            $this->filesystem->appendToFile($filePath, $contents);
+            $this->saveCompiledTemplate($output, $file, $contents);
         }
+    }
+
+    protected function checkIfDirectoriesExist($templates, $output)
+    {
+        if (!$this->filesystem->exists($templates)) {
+            throw new \InvalidArgumentException($templates);
+        }
+
+        if (!$this->filesystem->exists($output)) {
+            throw new \InvalidArgumentException($output);
+        }
+    }
+
+    protected function cleanOutputDirectory($output)
+    {
+        $outputFiles = $this->finder->in($output)
+            ->files()
+            ->depth(0)
+            ->name('*' . self::OUTPUT_EXTENSION);
+
+        $this->filesystem->remove($outputFiles);
+    }
+
+    protected function findInputFiles($templates)
+    {
+        return $this->finder->in($templates)
+            ->files()
+            ->depth(0)
+            ->name('*' . self::INPUT_EXTENSION);
+    }
+
+    protected function saveCompiledTemplate($output, $file, $contents)
+    {
+        $fileName = str_replace(self::INPUT_EXTENSION, self::OUTPUT_EXTENSION, $file->getFilename());
+        $filePath = rtrim($output, '/') . '/' . $fileName;
+
+        $this->filesystem->remove($filePath);
+        $this->filesystem->appendToFile($filePath, $contents);
     }
 }
