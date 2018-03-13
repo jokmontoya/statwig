@@ -11,6 +11,11 @@
             "Statwig\\Statwig\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
     "license": "MIT",
     "authors": [
         {
@@ -18,5 +23,8 @@
             "email": "krzysztof@engineer.com"
         }
     ],
-    "minimum-stability": "stable"
+    "minimum-stability": "stable",
+    "require-dev": {
+        "phpunit/phpunit": "^7.0"
+    }
 }
