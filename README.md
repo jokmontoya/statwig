@@ -41,11 +41,11 @@ You can use all Twig functionality like including files, extending layouts etc. 
 Given you have the following directory structure:
 
 ``` 
-- templates/
+templates/
 -- layouts/
----  base.html.twig
+---- base.html.twig
 -- file.html.twig
-- output/
+output/
 vendor/
 composer.json
 ```
@@ -53,11 +53,11 @@ composer.json
 When you run the tool, you will get a new file:
 
 ``` 
-- templates/
+templates/
 -- layouts/
----  base.html.twig
+---- base.html.twig
 -- file.html.twig
-- output/
+output/
 -- file.html
 vendor/
 composer.json
