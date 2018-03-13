@@ -11,5 +11,6 @@ use Statwig\Statwig\Commands\ParseCommand;
 
 $app = new Application();
 $app->add(new ParseCommand());
+$app->setDefaultCommand('parse', true);
 
 $app->run();

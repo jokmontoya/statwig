@@ -2,6 +2,8 @@
 
 namespace Statwig\Statwig\Commands;
 
+use Statwig\Statwig\Helpers\DirectoryParser;
+use Statwig\Statwig\Services\TwigParserService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -21,10 +23,12 @@ class ParseCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $output->writeln('<info>Statwig 0.0.1</info>');
-        $output->writeln(BASE_PATH);
-        $output->writeln(CACHE_PATH);
-        $output->writeln($input->getArgument('templates'));
-        $output->writeln($input->getArgument('output'));
+        $directoryParser = new DirectoryParser();
+
+        $templatesDirectory = $directoryParser->parse(BASE_PATH, $input->getArgument('templates'));
+        $outputDirectory = $directoryParser->parse(BASE_PATH, $input->getArgument('output'));
+
+        $twigParser = new TwigParserService();
+        $twigParser->execute($templatesDirectory, $outputDirectory);
     }
 }
