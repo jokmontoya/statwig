@@ -6,8 +6,8 @@
          processIsolation="false"
          stopOnFailure="false">
     <testsuites>
-        <testsuite name="Unit">
-            <directory suffix="Test.php">./tests/Unit</directory>
+        <testsuite name="Statwig">
+            <directory suffix="Test.php">./tests/</directory>
         </testsuite>
     </testsuites>
     <filter>

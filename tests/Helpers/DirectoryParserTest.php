@@ -1,11 +1,11 @@
 <?php
 
-namespace Tests\Unit\Helpers;
+namespace Tests\Helpers;
 
 use Statwig\Statwig\Helpers\DirectoryParser;
-use Tests\Unit\UnitTestCase;
+use Tests\TestCase;
 
-class DirectoryParserTest extends UnitTestCase
+class DirectoryParserTest extends TestCase
 {
     /**
      * @test
