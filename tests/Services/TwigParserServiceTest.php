@@ -92,17 +92,4 @@ FILE;
         $this->assertEquals('File Contents', file_get_contents($fs->path('/tmp/output/file.html')));
         $this->assertEquals('<div>Test contents</div>', file_get_contents($fs->path('/tmp/output/test.html')));
     }
-
-    protected function tearDown()
-    {
-        $files = [ 'file', 'test' ];
-
-        foreach ($files as $file) {
-            $path = __DIR__.'/../output/'.$file.'.html';
-
-            if ( ! is_readable($path)) continue;
-
-            unlink($path);
-        }
-    }
 }
