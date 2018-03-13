@@ -3,7 +3,13 @@
     "description": "Static site generator using Twig templating engine",
     "type": "project",
     "require": {
-        "twig/twig": "^2.4"
+        "twig/twig": "^2.4",
+        "symfony/console": "^4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Statwig\\Statwig\\": "src/"
+        }
     },
     "license": "MIT",
     "authors": [
