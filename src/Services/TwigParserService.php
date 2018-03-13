@@ -3,6 +3,7 @@
 namespace Statwig\Statwig\Services;
 
 use Statwig\Statwig\Exceptions\DirectoryNotReadableException;
+use Statwig\Statwig\Exceptions\DirectoryNotWritableException;
 use Statwig\Statwig\Helpers\FileFinder;
 use Twig_Environment;
 
@@ -20,8 +21,8 @@ class TwigParserService
 
     public function execute($templates, $output)
     {
-        if ( ! is_readable($output)) {
-            throw new DirectoryNotReadableException($output);
+        if ( ! is_writable($output)) {
+            throw new DirectoryNotWritableException($output);
         }
 
         $files = (new FileFinder())
