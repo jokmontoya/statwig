@@ -2,6 +2,7 @@
 
 namespace Statwig\Statwig\Commands;
 
+use Statwig\Statwig\Exceptions\DirectoryNotReadableException;
 use Statwig\Statwig\Helpers\DirectoryParser;
 use Statwig\Statwig\Services\TwigParserService;
 use Symfony\Component\Console\Command\Command;
@@ -29,11 +30,15 @@ class ParseCommand extends Command
         $outputDirectory = $directoryParser->parse(BASE_PATH, $input->getArgument('output'));
 
         $loader = new \Twig_Loader_Filesystem($templatesDirectory);
-        $twig = new \Twig_Environment($loader, [
-           'cache' => false
-        ]);
+        $twig = new \Twig_Environment($loader);
 
-        $twigParser = new TwigParserService($twig);
-        $twigParser->execute($templatesDirectory, $outputDirectory);
+        try {
+            (new TwigParserService($twig))
+                ->execute($templatesDirectory, $outputDirectory);
+        } catch (DirectoryNotReadableException $e) {
+            $output->writeln('<error>' . $e->getMessage() . ' directory does not exist or is not readable.</error>');
+        }
+
+        $output->writeln('<info>Views parsed successfully.</info>');
     }
 }

@@ -6,10 +6,14 @@ use Statwig\Statwig\Exceptions\DirectoryNotReadableException;
 
 class FileFinder
 {
-    public function fromDirectoryWithExtension($directory, $extension)
+    /**
+     * Iterates through the given $directory
+     * And finds files with $extension
+     */
+    public function fromDirectoryWithExtension($directory, $extension): array
     {
         if ( ! is_readable($directory)) {
-            throw new DirectoryNotReadableException();
+            throw new DirectoryNotReadableException($directory);
         }
 
         if ( 0 !== strpos($extension, '.' )) {
