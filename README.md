@@ -66,7 +66,7 @@ composer.json
 Given the template looks like this:
 
 ```twig
-<div>{% block body %}{% endblock %}
+<div>{% block body %}{% endblock %}</div>
 ```
 
 and `file.html.twig`:
