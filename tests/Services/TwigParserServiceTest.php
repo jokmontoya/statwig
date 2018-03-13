@@ -8,58 +8,89 @@ use Statwig\Statwig\Services\TwigParserService;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Tests\TestCase;
+use Twig_Environment;
 
 class TwigParserServiceTest extends TestCase
 {
+    /** @var TwigParserService */
+    protected $service;
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->twig = $twig = $this->mock(Twig_Environment::class);
+        $this->finder = $finder = $this->mock(Finder::class);
+        $this->filesystem = $filesystem = $this->mock(Filesystem::class);
+
+        $this->service = new TwigParserService($twig, $filesystem, $finder);
+    }
+
+
     /** @test */
     function templates_directory_has_to_be_readable()
     {
-        $filesystem = new Filesystem();
-        $finder = new Finder();
-        $twig = $this->mock(\Twig_Environment::class);
-        $service = new TwigParserService($twig, $filesystem, $finder);
-
         $templatesDirectory = '/non-existent-directory';
         $outputDirectory = '/tmp';
 
-        $this->expectException(DirectoryNotReadableException::class);
-        $service->execute($templatesDirectory, $outputDirectory);
+        $this->filesystem->expects($this->once())
+            ->method('exists')
+            ->with($templatesDirectory)
+            ->willReturn(false);
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->service->execute($templatesDirectory, $outputDirectory);
     }
 
     /** @test */
     function output_directory_has_to_be_writable()
     {
-        $filesystem = new Filesystem();
-        $finder = new Finder();
-        $twig = $this->mock(\Twig_Environment::class, $filesystem);
-        $service = new TwigParserService($twig, $filesystem, $finder);
-
         $templatesDirectory = __DIR__.'/../files/';
         $outputDirectory = '/non-existent-directory';
 
-        $this->expectException(DirectoryNotWritableException::class);
-        $service->execute($templatesDirectory, $outputDirectory);
+        $this->filesystem->expects($this->exactly(2))
+            ->method('exists')
+            ->withConsecutive([ $this->equalTo($templatesDirectory) ], [ $this->equalTo($outputDirectory) ])
+            ->willReturnOnConsecutiveCalls([ true, false ]);
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->service->execute($templatesDirectory, $outputDirectory);
     }
 
     /** @test */
     function files_are_rendered_into_output()
     {
-        $templatesDirectory = __DIR__.'/../files/';
-        $outputDirectory =  __DIR__.'/../output/';
+        $fs = new \VirtualFileSystem\FileSystem();
+        $fs->createDirectory('/tmp');
+        $fs->createDirectory('/tmp/output');
+        $fs->createDirectory('/tmp/templates');
+        $fs->createDirectory('/tmp/templates/layouts');
 
+        $templatesDirectory = $fs->path('/tmp/templates');
+        $outputDirectory =  $fs->path('/tmp/output');
+
+        $testFile = <<<FILE
+{% extends 'layouts/base.html.twig' %}
+{% block body %}Test contents{% endblock %}
+FILE;
+
+        $layoutFile = '<div>{% block body %}{% endblock %}</div>';
+
+        $fs->createFile('/tmp/templates/file.html.twig', 'File Contents');
+        $fs->createFile('/tmp/templates/test.html.twig', $testFile);
+        $fs->createFile('/tmp/templates/layouts/base.html.twig', $layoutFile);
+
+        $twig = new Twig_Environment(new \Twig_Loader_Filesystem($templatesDirectory));
         $filesystem = new Filesystem();
         $finder = new Finder();
-        $loader = new \Twig_Loader_Filesystem($templatesDirectory);
-        $twig = new \Twig_Environment($loader);
 
         $service = new TwigParserService($twig, $filesystem, $finder);
-
         $service->execute($templatesDirectory, $outputDirectory);
 
-        $this->assertFileExists($outputDirectory . 'file.html');
-        $this->assertFileExists($outputDirectory . 'test.html');
-        $this->assertEquals('File contents', file_get_contents($outputDirectory . 'file.html'));
-        $this->assertEquals('<div>Test contents</div>', file_get_contents($outputDirectory . 'test.html'));
+        $this->assertFileExists($fs->path('/tmp/output/file.html'));
+        $this->assertFileExists($fs->path('/tmp/output/test.html'));
+        $this->assertEquals('File Contents', file_get_contents($fs->path('/tmp/output/file.html')));
+        $this->assertEquals('<div>Test contents</div>', file_get_contents($fs->path('/tmp/output/test.html')));
     }
 
     protected function tearDown()

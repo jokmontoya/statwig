@@ -33,11 +33,11 @@ class TwigParserService
     public function execute($templates, $output)
     {
         if ( ! $this->filesystem->exists($templates)) {
-            throw new DirectoryNotReadableException($templates);
+            throw new \InvalidArgumentException($templates);
         }
 
         if ( ! $this->filesystem->exists($output)) {
-            throw new DirectoryNotWritableException($output);
+            throw new \InvalidArgumentException($output);
         }
 
         /** @var \SplFileInfo[] $files */
@@ -48,6 +48,7 @@ class TwigParserService
 
         foreach ($files as $file) {
             $contents = $this->twig->render($file->getFilename());
+
             $fileName = str_replace(self::INPUT_EXTENSION, self::OUTPUT_EXTENSION, $file->getFilename());
             $filePath = rtrim($output, '/') . '/' . $fileName;
 

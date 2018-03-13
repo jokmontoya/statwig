@@ -2,6 +2,7 @@
 
 namespace Statwig\Statwig\Commands;
 
+use InvalidArgumentException;
 use Statwig\Statwig\Exceptions\DirectoryNotReadableException;
 use Statwig\Statwig\Exceptions\DirectoryNotWritableException;
 use Statwig\Statwig\Helpers\DirectoryParser;
@@ -27,10 +28,8 @@ class ParseCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $directoryParser = new DirectoryParser();
-
-        $templatesDirectory = $directoryParser->parse(BASE_PATH, $input->getArgument('templates'));
-        $outputDirectory = $directoryParser->parse(BASE_PATH, $input->getArgument('output'));
+        $templatesDirectory = $input->getArgument('templates');
+        $outputDirectory = $input->getArgument('output');
 
         $loader = new \Twig_Loader_Filesystem($templatesDirectory);
         $twig = new \Twig_Environment($loader);
@@ -40,10 +39,9 @@ class ParseCommand extends Command
         try {
             (new TwigParserService($twig, $filesystem, $finder))
                 ->execute($templatesDirectory, $outputDirectory);
-        } catch (DirectoryNotReadableException $e) {
-            $output->writeln('<error>' . $e->getMessage() . ' directory does not exist or is not readable.</error>');
-        } catch (DirectoryNotWritableException $e) {
-            $output->writeln('<error>' . $e->getMessage() . ' directory does not exist or is not writable.</error>');
+        } catch (\Exception $e) {
+            $output->writeln('<info>Could not parse templates.</info>');
+            $output->writeln('<error>' . $e->getMessage() . '</error>');
         }
 
         $output->writeln('<info>Views parsed successfully.</info>');
