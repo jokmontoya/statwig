@@ -8,6 +8,8 @@ You can also chech [the demo app](https://github.com/statwig/demo).
 
 It will take every file with `.html.twig` extension **FROM THE ROOT** of the templates directory (excluding subdirectories) and compile them into output directory with `.html` extension.
 
+![StaTwig demo](https://statwig.github.io/image.png)
+
 ### Installation
 
 You can get StaTwig via composer:
