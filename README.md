@@ -4,7 +4,7 @@
 [![Latest Stable Version](https://poser.pugx.org/statwig/statwig/v/stable)](https://packagist.org/packages/statwig/statwig)
 
 StaTwig is a PHP console tool to compile Twig templates into HTML views.
-You can also chech [the demo app](https://github.com/statwig/demo).
+You can also check [the demo app](https://github.com/statwig/demo).
 
 It will take every file with `.html.twig` extension **FROM THE ROOT** of the templates directory (excluding subdirectories) and compile them into output directory with `.html` extension.
 
