@@ -1,6 +1,7 @@
 # StaTwig
 [![Build Status](https://travis-ci.org/statwig/statwig.svg?branch=master)](https://travis-ci.org/statwig/statwig)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Latest Stable Version](https://poser.pugx.org/statwig/statwig/v/stable)](https://packagist.org/packages/statwig/statwig)
 
 StaTwig is a PHP console tool to compile Twig templates into HTML views.
 You can also chech [the demo app](https://github.com/statwig/demo).
